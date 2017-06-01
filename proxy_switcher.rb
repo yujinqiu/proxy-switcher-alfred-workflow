@@ -123,7 +123,7 @@ EOF
 
   class ProxyAutoDiscovery < ProxyOption
 
-    SET_STATE_CMD = "networksetup -setproxyautodiscovery '%s' %s"
+    SET_STATE_CMD = "sudo networksetup -setproxyautodiscovery '%s' %s"
 
     def initialize(service)
       super(service, 'AutoDiscoveryProxy')
@@ -152,8 +152,8 @@ EOF
   class AutoProxy < ProxyOption
 
     GET_INFO_CMD = "networksetup -getautoproxyurl '%s'"
-    TURN_ON_CMD = "networksetup -set%surl '%s' '%s'"
-    TURN_OFF_CMD = "networksetup -set%sstate '%s' off"
+    TURN_ON_CMD = "sudo networksetup -set%surl '%s' '%s'"
+    TURN_OFF_CMD = "sudo networksetup -set%sstate '%s' off"
 
     def initialize(service, options)
       super(service, 'AutoProxy', options)
