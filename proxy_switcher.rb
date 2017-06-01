@@ -66,8 +66,8 @@ EOF
     attr :human_name
 
     GET_INFO_CMD = "networksetup -get%s '%s'"
-    TURN_ON_CMD = "networksetup -set%s '%s' '%s' '%s' %s %s %s"
-    TURN_OFF_CMD = "networksetup -set%sstate '%s' off"
+    TURN_ON_CMD = "sudo networksetup -set%s '%s' '%s' '%s' %s %s %s"
+    TURN_OFF_CMD = "sudo networksetup -set%sstate '%s' off"
 
     def initialize(service, name, options={})
       super()
