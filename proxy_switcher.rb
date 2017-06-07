@@ -47,6 +47,8 @@ EOF
         ProxyAutoDiscovery.new(service)
       when 'AutoProxy'
         AutoProxy.new(service, options)
+      when 'DNSProxy'
+        DNSProxy.new(service, options)
       else
         ProxyOption.new(service, name, options)
       end
@@ -60,7 +62,8 @@ EOF
       'HTTPSProxy' => 'securewebproxy',
       'FTPProxy' => 'ftpproxy',
       'RTSPProxy' => 'streamingproxy',
-      'GopherProxy' => 'gopherproxy'
+      'GopherProxy' => 'gopherproxy',
+      'DNSProxy' => 'dnsproxy'
     }
 
     attr :human_name
@@ -88,6 +91,7 @@ EOF
       @auth = options['Auth']
       @username = options['Username']
       @password = options['Password']
+      @addrs = options['Addrs']
     end
 
     def fetch_info
@@ -182,6 +186,38 @@ EOF
         @attributes[:arg] = TURN_ON_CMD % [@name, @service, @url]
       end
       @title = "%s: %s, %s" % [@human_name, @status, @url]
+    end
+  end
+  
+  class DNSProxy < ProxyOption
+
+    GET_DNS_CMD = "networksetup -getdnsservers '%s'"
+    TURN_DNS_ON = "sudo networksetup -setdnsservers '%s' '%s'"
+    TURN_DNS_OFF = "sudo networksetup -setdnsservers '%s' '%s'"
+
+    def initialize(service, options)
+      super(service, 'DNSProxy', options)
+    end
+
+    def fetch_info
+      IO.popen GET_DNS_CMD % @service do |io|
+        io.each do |line|
+          line.chomp!
+          if line =~ /^There aren't any DNS Servers/
+            @status = 'Off'
+            @reversed_status = 'on'
+          else
+            @status = 'On'
+            @reversed_status = 'off'
+          end
+        end
+      end
+      if @status == 'On'
+        @attributes[:arg] = TURN_DNS_OFF % [@service, 'empty']
+      else
+        @attributes[:arg] = TURN_DNS_ON % [@service, @addrs]
+      end
+      @title = "%s: %s, %s" % [@human_name, @status, @addrs]
     end
   end
 end
