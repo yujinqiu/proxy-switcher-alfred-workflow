@@ -22,3 +22,5 @@ RTSPProxy:
 GopherProxy:
   Host: 127.0.0.1
   Port: 8080
+DNSProxy:
+  Addrs: 127.0.0.1
